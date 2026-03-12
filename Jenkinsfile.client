@@ -7,6 +7,8 @@ podTemplate(
     namespace:      'devops-tools',
     serviceAccount: 'jenkins-admin',
     containers: [
+
+        // ── JNLP ─────────────────────────────────────────────
         containerTemplate(
             name:  'jnlp',
             image: 'jenkins/inbound-agent:latest',
@@ -15,6 +17,8 @@ podTemplate(
                 envVar(key: 'JENKINS_TUNNEL', value: 'jenkins-agent-service.devops-tools.svc.cluster.local:50000')
             ]
         ),
+
+        // ── Node.js (install, unit tests, build) ──────────────
         containerTemplate(
             name:                  'nodejs',
             image:                 'node:25-alpine',
@@ -29,6 +33,24 @@ podTemplate(
                 envVar(key: 'CI',               value: 'true')
             ]
         ),
+
+        // ── Playwright (E2E tests) ────────────────────────────
+        containerTemplate(
+            name:                  'playwright',
+            image:                 'mcr.microsoft.com/playwright:v1.44.0-jammy',
+            ttyEnabled:            true,
+            command:               'cat',
+            resourceRequestCpu:    '500m',
+            resourceLimitCpu:      '2',
+            resourceRequestMemory: '1Gi',
+            resourceLimitMemory:   '3Gi',
+            envVars: [
+                envVar(key: 'CI',       value: 'true'),
+                envVar(key: 'BASE_URL', value: 'http://localhost:5173')
+            ]
+        ),
+
+        // ── Kaniko (build & push Docker image) ────────────────
         containerTemplate(
             name:                  'kaniko',
             image:                 'gcr.io/kaniko-project/executor:debug',
@@ -40,6 +62,7 @@ podTemplate(
             resourceLimitCpu:      '2'
         )
     ],
+
     volumes: [
         persistentVolumeClaim(
             claimName: 'npm-cache-pvc',
@@ -50,12 +73,12 @@ podTemplate(
 ) {
     node(podLabel) {
 
-        // ── 1. CHECKOUT ───────────────────────────────────────────────
+        // ── 1. CHECKOUT ───────────────────────────────────────
         stage('Checkout') {
             sh 'git clone -b react-refactor https://github.com/Naoe1/k8s_cicd_sample .'
         }
 
-        // ── 2. RUN TESTS ──────────────────────────────────────────────
+        // ── 2. RUN TESTS (Vitest) ─────────────────────────────
         stage('Run Tests') {
             container('nodejs') {
                 echo 'Starting Client Tests...'
@@ -66,7 +89,33 @@ podTemplate(
             }
         }
 
-        // ── 3. BUILD & PUSH ───────────────────────────────────────────
+        // ── 3. E2E TESTS (Playwright) ─────────────────────────
+        stage('E2E Tests') {
+            container('playwright') {
+                echo '🎭 Running Playwright E2E tests...'
+                dir('client/react-testing-demo') {
+                    sh 'npm ci --prefer-offline --cache /npm-cache'
+                    sh 'npm run dev &'
+                    sh 'npx wait-on http://localhost:5173 --timeout 60000'
+                    sh 'npx playwright test --reporter=list,html,junit'
+                }
+            }
+
+            // Archive HTML report
+            publishHTML(target: [
+                allowMissing:          false,
+                alwaysLinkToLastBuild: true,
+                keepAll:               true,
+                reportDir:             'client/react-testing-demo/playwright-report',
+                reportFiles:           'index.html',
+                reportName:            'Playwright E2E Report'
+            ])
+
+            // Archive JUnit results
+            junit 'client/react-testing-demo/playwright-results.xml'
+        }
+
+        // ── 4. BUILD & PUSH ───────────────────────────────────
         stage('Build & Push with Kaniko') {
             container('kaniko') {
                 withCredentials([usernamePassword(
@@ -87,7 +136,7 @@ podTemplate(
             }
         }
 
-        // ── 4. CLEANUP ────────────────────────────────────────────────
+        // ── 5. CLEANUP ────────────────────────────────────────
         stage('Cleanup') {
             echo "Pipeline finished successfully. Pod ${podLabel} will now terminate."
         }

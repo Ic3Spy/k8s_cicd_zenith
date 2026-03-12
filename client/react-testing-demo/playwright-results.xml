@@ -1,0 +1,58 @@
+<testsuites id="" name="" tests="27" failures="0" skipped="0" errors="0" time="17.942878">
+<testsuite name="calculator.spec.js" timestamp="2026-03-12T08:49:51.885Z" hostname="chromium" tests="27" failures="0" skipped="0" time="52.329" errors="0">
+<testcase name="Display › shows 0 on initial load" classname="calculator.spec.js" time="1.817">
+</testcase>
+<testcase name="Display › shows digit when pressed" classname="calculator.spec.js" time="1.937">
+</testcase>
+<testcase name="Display › appends multiple digits" classname="calculator.spec.js" time="2.263">
+</testcase>
+<testcase name="Display › AC resets display to 0" classname="calculator.spec.js" time="2.414">
+</testcase>
+<testcase name="Display › backspace removes last digit" classname="calculator.spec.js" time="1.887">
+</testcase>
+<testcase name="Display › handles decimal input" classname="calculator.spec.js" time="2.122">
+</testcase>
+<testcase name="Display › prevents duplicate decimal point" classname="calculator.spec.js" time="1.904">
+</testcase>
+<testcase name="Arithmetic › adds two numbers" classname="calculator.spec.js" time="2.092">
+</testcase>
+<testcase name="Arithmetic › subtracts two numbers" classname="calculator.spec.js" time="2.211">
+</testcase>
+<testcase name="Arithmetic › multiplies two numbers" classname="calculator.spec.js" time="1.992">
+</testcase>
+<testcase name="Arithmetic › divides two numbers" classname="calculator.spec.js" time="2.011">
+</testcase>
+<testcase name="Arithmetic › chains multiple operations" classname="calculator.spec.js" time="2.392">
+</testcase>
+<testcase name="Arithmetic › handles division by zero" classname="calculator.spec.js" time="2.279">
+</testcase>
+<testcase name="Arithmetic › percentage converts correctly" classname="calculator.spec.js" time="2.112">
+</testcase>
+<testcase name="Arithmetic › toggles negative sign" classname="calculator.spec.js" time="2.093">
+</testcase>
+<testcase name="Keyboard Support › types digits via keyboard" classname="calculator.spec.js" time="1.534">
+</testcase>
+<testcase name="Keyboard Support › calculates via Enter key" classname="calculator.spec.js" time="1.575">
+</testcase>
+<testcase name="Keyboard Support › clears via Escape key" classname="calculator.spec.js" time="1.689">
+</testcase>
+<testcase name="Keyboard Support › backspace via Backspace key" classname="calculator.spec.js" time="1.528">
+</testcase>
+<testcase name="History › opens history panel" classname="calculator.spec.js" time="1.607">
+</testcase>
+<testcase name="History › records calculation in history" classname="calculator.spec.js" time="2.438">
+</testcase>
+<testcase name="History › recalls result from history" classname="calculator.spec.js" time="2.797">
+</testcase>
+<testcase name="History › clears history" classname="calculator.spec.js" time="2.562">
+</testcase>
+<testcase name="UI › calculator is visible on load" classname="calculator.spec.js" time="1.629">
+</testcase>
+<testcase name="UI › all number buttons are visible" classname="calculator.spec.js" time="1.077">
+</testcase>
+<testcase name="UI › all operator buttons are visible" classname="calculator.spec.js" time="1.118">
+</testcase>
+<testcase name="UI › display updates color on error" classname="calculator.spec.js" time="1.249">
+</testcase>
+</testsuite>
+</testsuites>
