@@ -92,20 +92,15 @@ podTemplate(
         // ── 3. E2E TESTS (Playwright) ─────────────────────────────
         stage('E2E Tests') {
             container('playwright') {
-                echo '🎭 Running Playwright E2E tests...'
-                dir('client/react-testing-demo') {
-                    // Install fresh in this container
-                    sh 'npm ci'
-                    // Install browser binaries
-                    sh 'npx playwright install chromium'
-                    // Start dev server in background
-                    sh 'npm run dev &'
-                    // Wait for it to be ready
-                    sh 'npx wait-on http://localhost:5173 --timeout 60000'
-                    // Run tests
-                    sh 'node_modules/.bin/playwright test --reporter=list,html,junit'
-                }
-            }
+        echo '🎭 Running Playwright E2E tests...'
+        dir('client/react-testing-demo') {
+            sh 'npm ci'
+            sh 'npm run dev &'
+            sh 'npx wait-on http://localhost:5173 --timeout 60000'
+            // Use the container's built-in playwright directly
+            sh 'playwright test --reporter=list,html,junit'
+        }
+    }
 
             publishHTML(target: [
                 allowMissing:          false,
