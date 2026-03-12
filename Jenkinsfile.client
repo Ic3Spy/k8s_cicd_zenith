@@ -97,7 +97,7 @@ podTemplate(
                     sh 'npm ci --prefer-offline --cache /npm-cache'
                     sh 'npm run dev &'
                     sh 'npx wait-on http://localhost:5173 --timeout 60000'
-                    sh 'npx playwright test --reporter=list,html,junit'
+                    sh 'node_modules/.bin/playwright test --reporter=list,html,junit'
                 }
             }
 
