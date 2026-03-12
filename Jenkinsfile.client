@@ -89,19 +89,24 @@ podTemplate(
             }
         }
 
-        // ── 3. E2E TESTS (Playwright) ─────────────────────────
+        // ── 3. E2E TESTS (Playwright) ─────────────────────────────
         stage('E2E Tests') {
             container('playwright') {
                 echo '🎭 Running Playwright E2E tests...'
                 dir('client/react-testing-demo') {
-                    sh 'npm ci --prefer-offline --cache /npm-cache'
+                    // Install fresh in this container
+                    sh 'npm ci'
+                    // Install browser binaries
+                    sh 'npx playwright install chromium'
+                    // Start dev server in background
                     sh 'npm run dev &'
+                    // Wait for it to be ready
                     sh 'npx wait-on http://localhost:5173 --timeout 60000'
+                    // Run tests
                     sh 'node_modules/.bin/playwright test --reporter=list,html,junit'
                 }
             }
 
-            // Archive HTML report
             publishHTML(target: [
                 allowMissing:          false,
                 alwaysLinkToLastBuild: true,
@@ -111,10 +116,8 @@ podTemplate(
                 reportName:            'Playwright E2E Report'
             ])
 
-            // Archive JUnit results
             junit 'client/react-testing-demo/playwright-results.xml'
         }
-
         // ── 4. BUILD & PUSH ───────────────────────────────────
         stage('Build & Push with Kaniko') {
             container('kaniko') {
