@@ -75,7 +75,7 @@ podTemplate(
 
         // ── 1. CHECKOUT ───────────────────────────────────────
         stage('Checkout') {
-            sh 'git clone -b react-refactor https://github.com/Naoe1/k8s_cicd_sample .'
+            sh 'git clone -b react-refactor https://github.com/Ic3Spy/k8s_cicd_zenith .'
         }
 
         // ── 2. RUN TESTS (Vitest) ─────────────────────────────
