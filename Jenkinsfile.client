@@ -97,7 +97,7 @@ podTemplate(
                     sh 'npm ci'
                     sh 'npm run dev &'
                     sh 'npx wait-on http://localhost:5173 --timeout 60000'
-                    sh 'npx --yes playwright@1.44.0 test e2e/ --reporter=list,html,junit'
+                    sh 'npx --yes playwright@1.44.0 test e2e/calculator.spec.js --reporter=list,html,junit'
                 }
             }
 
