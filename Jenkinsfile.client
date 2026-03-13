@@ -37,7 +37,7 @@ podTemplate(
         // ── Playwright (E2E tests) ────────────────────────────
         containerTemplate(
             name:                  'playwright',
-            image:                 'mcr.microsoft.com/playwright:v1.44.0-jammy',
+            image:                 'mcr.microsoft.com/playwright:v1.58.2-noble',
             ttyEnabled:            true,
             command:               'cat',
             resourceRequestCpu:    '500m',
@@ -95,6 +95,7 @@ podTemplate(
                 echo '🎭 Running Playwright E2E tests...'
                 dir('client/react-testing-demo') {
                     sh 'npm ci'
+                    sh 'npx playwright install --with-deps chromium'
                     sh 'npm run dev &'
                     sh 'npx wait-on http://localhost:5173 --timeout 60000'
                     sh 'npx playwright test e2e/calculator.spec.js --reporter=list,html,junit'
